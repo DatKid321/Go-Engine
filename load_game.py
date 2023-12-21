@@ -1,11 +1,11 @@
 import pygame
 
-Colour = {"B" : (0, 0, 0), "W" : (255, 255, 255)}
+Colour = {"B": (0, 0, 0), "W": (255, 255, 255), "G": (220, 177, 108)}
 
 pygame.init()
 
 screen = pygame.display.set_mode([500, 500])
-screen.fill((220, 177, 108))
+screen.fill(Colour["G"])
 
 for i in range(1, 20):
     pygame.draw.line(screen, Colour["B"], (25 * i, 25 * 1), (25 * i, 25 * 19))
@@ -28,4 +28,3 @@ while running:
             running = False
 
 pygame.quit()
-
