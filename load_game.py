@@ -18,7 +18,6 @@ with open("-1.sgf", "r") as sgf_file:
             pygame.draw.circle(screen, Colour[move[0]], position, 12)
             pygame.draw.circle(screen, Colour["B"], position, 12, 1)
 
-
 pygame.display.flip()
 
 running = True
