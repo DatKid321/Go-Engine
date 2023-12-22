@@ -1,6 +1,7 @@
 import pygame
 
 Colour = {"B": (0, 0, 0), "W": (255, 255, 255), "G": (220, 177, 108)}
+Goban = [19 * []]
 
 pygame.init()
 
