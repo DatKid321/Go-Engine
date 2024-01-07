@@ -1,7 +1,8 @@
 import pygame
 
 Colour = {"B": (0, 0, 0), "W": (255, 255, 255), "G": (220, 177, 108)}
-Goban = [19 * []]
+Goban = 19 * [19 * [0]]
+print(Goban)
 
 pygame.init()
 
@@ -15,7 +16,10 @@ for i in range(1, 20):
 with open("-1.sgf", "r") as sgf_file:
     for line in sgf_file:
         for move in filter(None, line.strip().split(";")[1:]):
-            position = (25 * (ord(move[2]) - 96), 25 * (ord(move[3]) - 96))
+            Goban[ord(move[2]) - 96][ord(move[3]) - 96] += 1
+            # position = (25 * (ord(move[2]) - 96), 25 * (ord(move[3]) - 96))
+
+
             pygame.draw.circle(screen, Colour[move[0]], position, 12)
             pygame.draw.circle(screen, Colour["B"], position, 12, 1)
 
