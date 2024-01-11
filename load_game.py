@@ -20,6 +20,13 @@ def px(*ints):
 
 # Flip stones onto goban
 def drawStones():
+    screen.fill(Colour[None])
+    # Goban
+    for point in it.product(px(3, 9, 15), repeat = 2): 
+        pg.draw.circle(screen, Colour[True], point, 5)
+    for i in range(19):
+        pg.draw.line(screen, Colour[True], px(i, 0), px(i, 18))
+        pg.draw.line(screen, Colour[True], px(0, i), px(18, i))
     for point in it.product(range(19), repeat = 2):
         try:
             pg.draw.circle(screen, Colour[maskedGoban[point]], px(*point), 12)
@@ -28,13 +35,38 @@ def drawStones():
             pass
     pg.display.flip()
 
-def libertyCount(bool, position):
-    print(bool, maskedGoban[tuple(position)])
+def libertyCount(colour, position, mask):
+    print(colour, position)
+    mask.append(tuple(position))
+    for i in range(4):
+        z = 1j**i
+        adjacent = position + np.array([z.real, z.imag], dtype = int)
+        try:
+            if tuple(adjacent) in mask:
+                pass
+            elif isinstance(maskedGoban[tuple(adjacent)], np.bool_):
+                if maskedGoban[tuple(adjacent)] == colour: # Same colour
+                    print(z, tuple(adjacent), maskedGoban[tuple(adjacent)], colour, 'same')
+                    return libertyCount(colour, adjacent, mask)
+                else: # Opposite
+                    print(z, tuple(adjacent), maskedGoban[tuple(adjacent)], colour, 'opposite')
+            else: # Empty
+                print(z, tuple(adjacent), maskedGoban[tuple(adjacent)], colour, 'empty')
+                return True
+        except IndexError:
+            pass
 
 def removeStones(position):
     for i in range(4):
         z = 1j**i
-        libertyCount(~maskedGoban[tuple(position)], position + np.array([z.real, z.imag], dtype = int))
+        try:
+            adjacent = position + np.array([z.real, z.imag], dtype = int)
+            if isinstance(maskedGoban[tuple(adjacent)], np.bool_) and (maskedGoban[tuple(position)] != maskedGoban[tuple(adjacent)]):
+                if libertyCount(not maskedGoban[tuple(position)], adjacent, mask := []) is None:
+                    for element in mask:
+                        maskedGoban[element] = np.ma.masked
+        except IndexError:
+            pass
 
 # Get next move from .sgf
 def nextMove():
@@ -42,17 +74,11 @@ def nextMove():
         move = next(moves)
         position = np.array([ord(move[2]) - 97, ord(move[3]) - 97])
         maskedGoban[tuple(position)] = (move[0] == "B")
+        print("-----")
         removeStones(position)
         drawStones()
     except StopIteration:
         pass
-
-# Goban
-for point in it.product(px(3, 9, 15), repeat = 2): 
-    pg.draw.circle(screen, Colour[True], point, 5)
-for i in range(19):
-    pg.draw.line(screen, Colour[True], px(i, 0), px(i, 18))
-    pg.draw.line(screen, Colour[True], px(0, i), px(18, i))
     
 drawStones()
 print(maskedGoban)
