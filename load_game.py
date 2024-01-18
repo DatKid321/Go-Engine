@@ -42,14 +42,15 @@ def libertyCount(colour, position, mask):
         z = 1j**i
         adjacent = position + np.array([z.real, z.imag], dtype = int)
         try:
-            if tuple(adjacent) in mask:
+            if tuple(adjacent) in mask or min(adjacent) < 0:
                 pass
             elif isinstance(maskedGoban[tuple(adjacent)], np.bool_):
                 if maskedGoban[tuple(adjacent)] == colour: # Same colour
                     print(z, tuple(adjacent), maskedGoban[tuple(adjacent)], colour, 'same')
-                    return libertyCount(colour, adjacent, mask)
-                else: # Opposite
-                    print(z, tuple(adjacent), maskedGoban[tuple(adjacent)], colour, 'opposite')
+                    if libertyCount(colour, adjacent, mask):
+                        return True
+                # else: # Opposite
+                #     print(z, tuple(adjacent), maskedGoban[tuple(adjacent)], colour, 'opposite')
             else: # Empty
                 print(z, tuple(adjacent), maskedGoban[tuple(adjacent)], colour, 'empty')
                 return True
@@ -63,6 +64,7 @@ def removeStones(position):
             adjacent = position + np.array([z.real, z.imag], dtype = int)
             if isinstance(maskedGoban[tuple(adjacent)], np.bool_) and (maskedGoban[tuple(position)] != maskedGoban[tuple(adjacent)]):
                 if libertyCount(not maskedGoban[tuple(position)], adjacent, mask := []) is None:
+                    print(mask)
                     for element in mask:
                         maskedGoban[element] = np.ma.masked
         except IndexError:
@@ -76,22 +78,26 @@ def nextMove():
         maskedGoban[tuple(position)] = (move[0] == "B")
         print("-----")
         removeStones(position)
-        drawStones()
     except StopIteration:
         pass
     
 drawStones()
 print(maskedGoban)
 
-pg.display.flip()
+for i in range(200):
+    nextMove()
+drawStones()
 
+clock = pg.time.Clock()
 
 running = True
 while running:
+    clock.tick(60)
     for event in pg.event.get():
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_SPACE:
                 nextMove()
+                drawStones()
         if event.type == pg.QUIT:
             running = False
 
