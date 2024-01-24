@@ -5,23 +5,19 @@ import pygame as pg
 import random as rd
 
 Colour = {True: (0, 0, 0), False: (255, 255, 255), None: (242, 176, 109)}
-maskedGoban = np.ma.array(np.empty((19, 19)), dtype = 'bool', mask = True)
+masked_goban = np.ma.array(np.empty((19, 19)), dtype = 'bool', mask = True)
+clock = pg.time.Clock()
 
-
-
-# Set directory 
-os.chdir("/Users/olivertan/Desktop/Go/sgfs/BadukMovies Collection")
+# Define directory 
+user_db = "/Users/olivertan/Desktop/Go/sgfs/BadukMovies Collection"
 
 # Random file
-randomSGF = rd.choice(os.listdir(os.getcwd()))
+random_sgf = user_db + "/" + rd.choice(os.listdir(user_db))
 
-print(randomSGF)
-
-def get_resource_file(path):
-    return os.path.join(os.path.dirname(__file__), path)
+print(random_sgf)
 
 # Read .sgf
-with open("KataokaSatoshi-KudoNorio73235.sgf", "r", encoding = "utf-8") as sgf_file:
+with open(random_sgf, "r", encoding = "utf-8") as sgf_file:
     moves = iter([move for line in sgf_file for move in filter(None, line.strip().split(";")[1:]) if line[0] == ";"]) 
 
 pg.init()
@@ -44,7 +40,7 @@ def drawStones():
         pg.draw.line(screen, Colour[True], px(0, i), px(18, i))
     for point in it.product(range(19), repeat = 2):
         try:
-            pg.draw.circle(screen, Colour[maskedGoban[point]], px(*point), 12)
+            pg.draw.circle(screen, Colour[masked_goban[point]], px(*point), 12)
             pg.draw.circle(screen, Colour[True], px(*point), 12, 1)
         except TypeError:
             pass
@@ -60,15 +56,15 @@ def libertyCount(colour, position, mask):
         try:
             if tuple(adjacent) in mask or min(adjacent) < 0:
                 pass
-            elif isinstance(maskedGoban[tuple(adjacent)], np.bool_):
-                if maskedGoban[tuple(adjacent)] == colour: # Same colour
-                    print(z, tuple(adjacent), maskedGoban[tuple(adjacent)], colour, 'same')
+            elif isinstance(masked_goban[tuple(adjacent)], np.bool_):
+                if masked_goban[tuple(adjacent)] == colour: # Same colour
+                    print(z, tuple(adjacent), masked_goban[tuple(adjacent)], colour, 'same')
                     if libertyCount(colour, adjacent, mask):
                         return True
                 # else: # Opposite
-                #     print(z, tuple(adjacent), maskedGoban[tuple(adjacent)], colour, 'opposite')
+                #     print(z, tuple(adjacent), masked_goban[tuple(adjacent)], colour, 'opposite')
             else: # Empty
-                print(z, tuple(adjacent), maskedGoban[tuple(adjacent)], colour, 'empty')
+                print(z, tuple(adjacent), masked_goban[tuple(adjacent)], colour, 'empty')
                 return True
         except IndexError:
             pass
@@ -79,11 +75,11 @@ def removeStones(position):
         z = 1j**i
         try: 
             adjacent = position + np.array([z.real, z.imag], dtype = int)
-            if min(adjacent) > 0 and isinstance(maskedGoban[tuple(adjacent)], np.bool_) and (maskedGoban[tuple(position)] != maskedGoban[tuple(adjacent)]):
-                if libertyCount(not maskedGoban[tuple(position)], adjacent, mask := []) is None:
+            if min(adjacent) > 0 and isinstance(masked_goban[tuple(adjacent)], np.bool_) and (masked_goban[tuple(position)] != masked_goban[tuple(adjacent)]):
+                if libertyCount(not masked_goban[tuple(position)], adjacent, mask := []) is None:
                     print(mask)
                     for element in mask:
-                        maskedGoban[element] = np.ma.masked
+                        masked_goban[element] = np.ma.masked
         except IndexError:
             pass
 
@@ -92,25 +88,25 @@ def nextMove():
     try:
         move = next(moves)
         position = np.array([ord(move[2]) - 97, ord(move[3]) - 97])
-        maskedGoban[tuple(position)] = (move[0] == "B")
+        masked_goban[tuple(position)] = (move[0] == "B")
         print("-----")
         removeStones(position)
     except StopIteration:
         pass
     
 drawStones()
-print(maskedGoban)
-
-clock = pg.time.Clock()
+print(masked_goban)
 
 running = True
 while running:
     clock.tick(60)
+    nextMove()
+    drawStones()
     for event in pg.event.get():
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_SPACE:
-                nextMove()
-                drawStones()
+        # if event.type == pg.KEYDOWN:
+        #     if event.key == pg.K_SPACE:
+        #         nextMove()
+        #         drawStones()
         if event.type == pg.QUIT:
             running = False
 
