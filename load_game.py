@@ -1,17 +1,32 @@
 import itertools as it
 import numpy as np
+import os
 import pygame as pg
+import random as rd
 
 Colour = {True: (0, 0, 0), False: (255, 255, 255), None: (242, 176, 109)}
 maskedGoban = np.ma.array(np.empty((19, 19)), dtype = 'bool', mask = True)
 
+
+
+# Set directory 
+os.chdir("/Users/olivertan/Desktop/Go/sgfs/BadukMovies Collection")
+
+# Random file
+randomSGF = rd.choice(os.listdir(os.getcwd()))
+
+print(randomSGF)
+
+def get_resource_file(path):
+    return os.path.join(os.path.dirname(__file__), path)
+
 # Read .sgf
-with open("-1.sgf", "r", encoding = "utf-8") as sgf_file:
-    moves = iter([move for line in sgf_file for move in filter(None, line.strip().split(";")[1:])]) 
+with open("KataokaSatoshi-KudoNorio73235.sgf", "r", encoding = "utf-8") as sgf_file:
+    moves = iter([move for line in sgf_file for move in filter(None, line.strip().split(";")[1:]) if line[0] == ";"]) 
 
 pg.init()
 
-screen = pg.display.set_mode([500, 500])
+screen = pg.display.set_mode([500, 600])
 screen.fill(Colour[None])
 
 # Convert coords to screen pixels
@@ -35,6 +50,7 @@ def drawStones():
             pass
     pg.display.flip()
 
+# Remove stones if they have no liberties
 def libertyCount(colour, position, mask):
     print(colour, position)
     mask.append(tuple(position))
@@ -57,12 +73,13 @@ def libertyCount(colour, position, mask):
         except IndexError:
             pass
 
+# Count liberties of adjacent opposing stones
 def removeStones(position):
     for i in range(4):
         z = 1j**i
-        try:
+        try: 
             adjacent = position + np.array([z.real, z.imag], dtype = int)
-            if isinstance(maskedGoban[tuple(adjacent)], np.bool_) and (maskedGoban[tuple(position)] != maskedGoban[tuple(adjacent)]):
+            if min(adjacent) > 0 and isinstance(maskedGoban[tuple(adjacent)], np.bool_) and (maskedGoban[tuple(position)] != maskedGoban[tuple(adjacent)]):
                 if libertyCount(not maskedGoban[tuple(position)], adjacent, mask := []) is None:
                     print(mask)
                     for element in mask:
