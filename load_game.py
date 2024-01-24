@@ -6,7 +6,7 @@ Colour = {True: (0, 0, 0), False: (255, 255, 255), None: (242, 176, 109)}
 maskedGoban = np.ma.array(np.empty((19, 19)), dtype = 'bool', mask = True)
 
 # Read .sgf
-with open("-1.sgf", "r") as sgf_file:
+with open("-1.sgf", "r", encoding = "utf-8") as sgf_file:
     moves = iter([move for line in sgf_file for move in filter(None, line.strip().split(";")[1:])]) 
 
 pg.init()
@@ -83,10 +83,6 @@ def nextMove():
     
 drawStones()
 print(maskedGoban)
-
-for i in range(200):
-    nextMove()
-drawStones()
 
 clock = pg.time.Clock()
 
