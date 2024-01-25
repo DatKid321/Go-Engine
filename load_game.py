@@ -48,7 +48,7 @@ def drawStones():
 
 # Remove stones if they have no liberties
 def libertyCount(colour, position, mask):
-    print(colour, position)
+    # print(colour, position)
     mask.append(tuple(position))
     for i in range(4):
         z = 1j**i
@@ -58,7 +58,7 @@ def libertyCount(colour, position, mask):
                 pass
             elif isinstance(masked_goban[tuple(adjacent)], np.bool_):
                 if masked_goban[tuple(adjacent)] == colour: # Same colour
-                    print(z, tuple(adjacent), masked_goban[tuple(adjacent)], colour, 'same')
+                    # print(z, tuple(adjacent), masked_goban[tuple(adjacent)], colour, 'same')
                     if libertyCount(colour, adjacent, mask):
                         return True
                 # else: # Opposite
@@ -75,7 +75,7 @@ def removeStones(position):
         z = 1j**i
         try: 
             adjacent = position + np.array([z.real, z.imag], dtype = int)
-            if min(adjacent) > 0 and isinstance(masked_goban[tuple(adjacent)], np.bool_) and (masked_goban[tuple(position)] != masked_goban[tuple(adjacent)]):
+            if min(adjacent) >= 0 and isinstance(masked_goban[tuple(adjacent)], np.bool_) and (masked_goban[tuple(position)] != masked_goban[tuple(adjacent)]):
                 if libertyCount(not masked_goban[tuple(position)], adjacent, mask := []) is None:
                     print(mask)
                     for element in mask:
@@ -99,7 +99,7 @@ print(masked_goban)
 
 running = True
 while running:
-    clock.tick(60)
+    clock.tick(20)
     nextMove()
     drawStones()
     for event in pg.event.get():
