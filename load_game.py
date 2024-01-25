@@ -9,7 +9,7 @@ masked_goban = np.ma.array(np.empty((19, 19)), dtype = 'bool', mask = True)
 clock = pg.time.Clock()
 
 # Define directory 
-user_db = "/Users/olivertan/Desktop/Go/sgfs/BadukMovies Collection"
+user_db = "/Users/olivertan/Desktop/Go/sgfs/BadukMovies-Collection"
 
 # Random file
 random_sgf = user_db + "/" + rd.choice(os.listdir(user_db))
@@ -20,8 +20,8 @@ print(random_sgf)
 with open(random_sgf, "r", encoding = "utf-8") as sgf_file:
     moves = iter([move for line in sgf_file for move in filter(None, line.strip().split(";")[1:]) if line[0] == ";"]) 
 
+# Initialise screen
 pg.init()
-
 screen = pg.display.set_mode([500, 600])
 screen.fill(Colour[None])
 
