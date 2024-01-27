@@ -22,6 +22,8 @@ with open(random_sgf, "r", encoding = "utf-8") as sgf_file:
 
 # Initialise screen
 pg.init()
+label_font = pg.font.SysFont("monospace", 10)
+label = label_font.render(random_sgf, 1, Colour[True])
 screen = pg.display.set_mode([500, 600])
 screen.fill(Colour[None])
 
@@ -32,6 +34,7 @@ def px(*ints):
 # Flip stones onto goban
 def drawStones():
     screen.fill(Colour[None])
+    screen.blit(label, (10, 500))
     # Goban
     for point in it.product(px(3, 9, 15), repeat = 2): 
         pg.draw.circle(screen, Colour[True], point, 5)
