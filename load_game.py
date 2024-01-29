@@ -1,8 +1,9 @@
 import itertools as it
 import numpy as np
-import os
+import os as os
 import pygame as pg
 import random as rd
+from pysgf import SGF
 
 Colour = {True: (0, 0, 0), False: (255, 255, 255), None: (242, 176, 109)}
 masked_goban = np.ma.array(np.empty((19, 19)), dtype = 'bool', mask = True)
@@ -12,7 +13,7 @@ clock = pg.time.Clock()
 user_db = "/Users/olivertan/Desktop/Go/sgfs/BadukMovies-Collection"
 
 # Random file
-random_sgf = user_db + "/" + rd.choice(os.listdir(user_db))
+random_sgf = f"{user_db}/{rd.choice(os.listdir(user_db))}"
 
 print(random_sgf)
 
