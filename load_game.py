@@ -2,6 +2,7 @@ import itertools as it
 import numpy as np
 import os as os
 import pygame as pg
+import pyparsing as pp
 import random as rd
 # from pysgf import SGF
 
