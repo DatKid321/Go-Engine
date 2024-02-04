@@ -103,7 +103,7 @@ print(masked_goban)
 
 running = True
 while running:
-    clock.tick(20)
+    clock.tick(60)
     nextMove()
     drawStones()
     for event in pg.event.get():
