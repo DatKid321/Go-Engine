@@ -3,7 +3,7 @@ import numpy as np
 import os as os
 import pygame as pg
 import random as rd
-# from pysgf import SGF
+import sgf_parser as sp
 
 Colour = {True: (0, 0, 0), False: (255, 255, 255), None: (242, 176, 109)}
 masked_goban = np.ma.array(np.empty((19, 19)), dtype = 'bool', mask = True)
@@ -18,8 +18,15 @@ random_sgf = f"{user_db}/{rd.choice(os.listdir(user_db))}"
 print(random_sgf)
 
 # Read .sgf
-with open(random_sgf, "r", encoding = "utf-8") as sgf_file:
-    moves = iter([move for line in sgf_file for move in filter(None, line.strip().split(";")[1:]) if line[0] == ";"]) 
+# with open(random_sgf, "r", encoding = "utf-8") as sgf_file:
+#     moves = iter([move for line in sgf_file for move in filter(None, line.strip().split(";")[1:]) if line[0] == ";"]) 
+
+moves = []
+parsed_file = sp.sgf_file_parse(random_sgf)
+nodes = parsed_file[0].children[0].children[0]
+for i in range(1, len(nodes)):
+    moves.append(nodes.children[i].children[0].squeeze())
+moves = iter(moves)
 
 # Initialise screen
 pg.init()
