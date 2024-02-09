@@ -106,7 +106,7 @@ def syntax():
 
 def sgf_file_parse(file_name):
     eval = syntax()
-    return eval.parse_file(file_name, encoding = "UTF-8")
+    return eval.parse_file(file_name, encoding = "UTF-8")[0]
 
 if __name__ == "__main__":
     eval = syntax()

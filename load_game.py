@@ -23,7 +23,7 @@ print(random_sgf)
 
 moves = []
 parsed_file = sp.sgf_file_parse(random_sgf)
-nodes = parsed_file[0].children[0].children[0]
+nodes = parsed_file.children[0].children[0]
 for i in range(1, len(nodes)):
     moves.append(nodes.children[i].children[0].squeeze())
 moves = iter(moves)
