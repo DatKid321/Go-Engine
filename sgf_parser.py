@@ -118,4 +118,3 @@ if __name__ == "__main__":
     output = eval.parse_file("-1.sgf", encoding="UTF-8")
 
     print(output)
-
